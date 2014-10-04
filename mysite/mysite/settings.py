@@ -1,48 +1,47 @@
 """
-Django settings for openshift project.
+Django settings for mysite project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
+https://docs.djangoproject.com/en/1.7/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
+https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import imp
+import socket
 
-ON_OPENSHIFT = False
-if 'OPENSHIFT_REPO_DIR' in os.environ:
-    ON_OPENSHIFT = True
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+
+
+# openshift is our PAAS for now.
+ON_PAAS = 'OPENSHIFT_REPO_DIR' in os.environ
+
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-default_keys = { 'SECRET_KEY': 'tjy&7h%c=q01+c5i@_-t)&n2c+y*tn7v_)vbdksnlv@s5qh%e_' }
-use_keys = default_keys
-if ON_OPENSHIFT:
-    imp.find_module('openshiftlibs')
-    import openshiftlibs
-    use_keys = openshiftlibs.openshift_secure(default_keys)
-
-SECRET_KEY = use_keys['SECRET_KEY']
+if ON_PAAS:
+    SECRET_KEY = os.environ['OPENSHIFT_SECRET_TOKEN']
+else:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = ')_7av^!cy(wfx=k#3*7x+(=j^fzv+ot^1@sh9s9t=8$bu@r(z$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if ON_OPENSHIFT:
-    DEBUG = False
+# adjust to turn off when on Openshift, but allow an environment variable to override on PAAS
+DEBUG = not ON_PAAS
+DEBUG = DEBUG or 'DEBUG' in os.environ
+if ON_PAAS and DEBUG:
+    print("*** Warning - Debug mode is on ***")
+
+TEMPLATE_DEBUG = True
+
+if ON_PAAS:
+    ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
 else:
-    DEBUG = True
-
-TEMPLATE_DEBUG = DEBUG
-
-if DEBUG:
     ALLOWED_HOSTS = []
-else:
-    ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -60,6 +59,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -82,25 +82,30 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     }
     MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + MIDDLEWARE_CLASSES + ('django.middleware.cache.FetchFromCacheMiddleware',)
 
+ROOT_URLCONF = 'mysite.urls'
 
-ROOT_URLCONF = 'urls'
-
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'mysite.wsgi.application'
 
 TEMPLATE_DIRS = (
      os.path.join(BASE_DIR,'templates'),
 )
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-if ON_OPENSHIFT:
+# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+
+if ON_PAAS:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(os.environ['OPENSHIFT_DATA_DIR'], 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',  
+            'NAME':     os.environ['OPENSHIFT_APP_NAME'],
+            'USER':     os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'],
+            'PASSWORD': os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'],
+            'HOST':     os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'],
+            'PORT':     os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],
         }
     }
 else:
+    # stock django
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -109,7 +114,7 @@ else:
     }
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
+# https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -121,7 +126,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi','static')
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
