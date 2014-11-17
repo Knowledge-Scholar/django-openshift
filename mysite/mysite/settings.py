@@ -82,7 +82,7 @@ if 'REDISCLOUD_URL' in os.environ and 'REDISCLOUD_PORT' in os.environ and 'REDIS
     }
     MIDDLEWARE_CLASSES = ('django.middleware.cache.UpdateCacheMiddleware',) + MIDDLEWARE_CLASSES + ('django.middleware.cache.FetchFromCacheMiddleware',)
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = 'mysite.mysite.urls'
 
 OPENSHIFT_PYTHON_WSGI_APPLICATION = os.path.join(BASE_DIR)
 
