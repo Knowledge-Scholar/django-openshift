@@ -15,5 +15,5 @@ setup(name='django 1.7 on Red Hat Openshift',
     description='Django 1.7 on OpenShift Python 3.3',
     author='Your name',
     author_email='example@example.com',
-    url='https://github.com/Knowledge-Scholar/django-py3-openshift-quickstart',
+    url='https://github.com/Knowledge-Scholar/django-openshift',
 )

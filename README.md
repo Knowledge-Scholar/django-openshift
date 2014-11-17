@@ -23,7 +23,7 @@ statements in `GIT_ROOT/.openshift/action_hooks/alter.sql` and then use
 `GIT_ROOT/.openshift/action_hooks/deploy` to execute that script (make
 sure to back up your database w/ `rhc app snapshot save` first :) )
 
-With this you can install Django 1.6 with Python 3.3 on OpenShift.
+With this you can install Django 1.7 with Python 3.3 on OpenShift.
 
 Running on OpenShift
 --------------------
@@ -49,7 +49,7 @@ Create the Python application with the name djangopy3.
 Add this upstream repo
 
      cd djangopy3
-     git remote add upstream -m master git://github.com/rancavil/django-py3-openshift-quickstart.git
+     git remote add upstream -m master git://github.com/Knowledge-Scholar/django-openshift.git
      git pull -s recursive -X theirs upstream master
 
 ####Note:
@@ -61,7 +61,7 @@ Then push the repo upstream
 
 Here, the [admin user name and password will be displayed](#admin-user-name-and-password), so pay
 special attention.
-	
+  
 That's it. You can now checkout your application at:
 
      http://djangopy3-$yournamespace.rhcloud.com
@@ -83,8 +83,8 @@ When you make:
 In the console output, you must find something like this:
 
      remote: Django application credentials:
-     remote: 	user: admin
-     remote: 	SY1ScjQGb2qb
+     remote:  user: admin
+     remote:  SY1ScjQGb2qb
 
 Or you can go to SSH console, and check the CREDENTIALS file located 
 in $OPENSHIFT_DATA_DIR.
@@ -95,8 +95,8 @@ in $OPENSHIFT_DATA_DIR.
 You should see the output:
 
      Django application credentials:
-     		 user: admin
-     		 SY1ScjQGb2qb
+         user: admin
+         SY1ScjQGb2qb
 
 After, you can change the password in the Django admin console.
 
@@ -112,29 +112,25 @@ Django project directory structure
                     post_deploy
                     pre_build
                     deploy
-                    secure_db.py
                cron/
                markers/
           setup.py   (Setup file with de dependencies and required libs)
           wsgi.py (This file execute Django over on WSGI for testing)
           README.md
           requirements.txt (for additionals packages dependencies)
+    licenses/ (Adicional licenses)
           libs/ (Adicional libraries)
-     	  data/	(For not-externally exposed wsgi code)
-          wsgi/	(Externally exposed wsgi goes)
-               application (Script to execute the application on wsgi)
-               openshift/  (Django project directory)
-                    __init__.py
-                    manage.py
-                    openshiftlibs.py
-                    openshiftstaticfiles.py (lib to use static files on the same server)
-                    settings.py
-                    urls.py
-                    views.py
-                    templates/
-                         home/
-                            home.html (Default home page, change it)
-               static/ (Public static content gets served here)
+          mysite/  (Externally exposed wsgi goes here. Change name)
+                mysite/  (Django project directory. Change also)
+                      __init__.py
+                      manage.py
+                      settings.py
+                      urls.py
+                      views.py
+                templates/
+                      home/
+                              home.html (Default home page, change it)
+          assets/ (Public static content gets served here)
 
 From HERE you can start with your own application.
 
