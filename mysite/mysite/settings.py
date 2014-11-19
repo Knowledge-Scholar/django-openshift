@@ -98,16 +98,46 @@ TEMPLATE_DIRS = (
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 if ON_PAAS:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',  
-            'NAME':     os.environ['OPENSHIFT_APP_NAME'],
-            'USER':     os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'],
-            'PASSWORD': os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'],
-            'HOST':     os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'],
-            'PORT':     os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],
+        if "OPENSHIFT_POSTGRESQL_DB_USERNAME" in os.environ: 
+    
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',  
+                'NAME':     os.environ['OPENSHIFT_APP_NAME'],
+                'USER':     os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'],
+                'PASSWORD': os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'],
+                'HOST':     os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'],
+                'PORT':     os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],
+            }
         }
+        
+        elif "OPENSHIFT_ORACLE_DB_USERNAME" in os.environ: 
+    
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME':     os.environ['OPENSHIFT_APP_NAME'],
+                'USER':     os.environ['OPENSHIFT_ORACLE_DB_USERNAME'],
+                'PASSWORD': os.environ['OPENSHIFT_ORACLE_DB_PASSWORD'],
+                'HOST':     os.environ['OPENSHIFT_ORACLE_DB_HOST'],
+                'PORT':     os.environ['OPENSHIFT_ORACLE_DB_PORT'],
+            }
+        }
+        
+        
+        
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.oracle',
+                'NAME': 'xe',
+                'USER': 'a_user',
+                'PASSWORD': 'a_password',
+                'HOST': '',
+                'PORT': '',
     }
+}
+
+        
 else:
     # stock django
     DATABASES = {
