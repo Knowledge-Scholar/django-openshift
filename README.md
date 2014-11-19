@@ -34,7 +34,9 @@ Install the RHC client tools if you have not already done so:
     
      sudo gem install rhc
 
-Create a python-3.3 application
+Create a python-3.3 application with the database of your choosing.
+
+Currently should work with postgre, mysql, or oracle. Example uses postgre.
 
      rhc app create djangopy3 python-3.3 postgresql-9.2
 
@@ -118,10 +120,10 @@ Django project directory structure
           wsgi.py (This file execute Django over on WSGI for testing)
           README.md
           requirements.txt (for additionals packages dependencies)
-    licenses/ (Adicional licenses)
+          licenses/ (Adicional licenses)
           libs/ (Adicional libraries)
-          mysite/  (Externally exposed wsgi goes here. Change name)
-                mysite/  (Django project directory. Change also)
+          mysite/  (Djano project directory. Change name)
+                mysite/  (Django app directory. Change name also)
                       __init__.py
                       manage.py
                       settings.py
@@ -151,7 +153,7 @@ On OpenShift, Django is served through wsgi, like cherrypy, this package can be 
      # Put here required packages or
      # Uncomment one or more lines below in the install_requires section
      # for the specific client drivers/modules your application needs.
-     packages = ['Django<=1.6',
+     packages = ['Django<=1.7',
                  'static3',  # If you want serve the static files in the same server
                   #  'mysql-connector-python',
                   #  'pymongo',
@@ -163,7 +165,7 @@ On OpenShift, Django is served through wsgi, like cherrypy, this package can be 
            packages.append('hiredis')
 
      setup(name='YourAppName', version='1.0',
-           description='OpenShift Python-3.3 / Django-1.6 Community Cartridge based application',
+           description='OpenShift Python-3.3 / Django-1.7 Community Cartridge based application',
            author='Your Name', author_email='admin@example.org',
            url='https://pypi.python.org/pypi',
            install_requires=packages,
