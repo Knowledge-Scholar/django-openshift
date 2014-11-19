@@ -123,17 +123,6 @@ if ON_PAAS:
                 'PORT':     os.environ['OPENSHIFT_ORACLE_DB_PORT'],
             }
         }
-        
-        
-        
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.oracle',
-                'NAME': 'xe',
-                'USER': 'a_user',
-                'PASSWORD': 'a_password',
-                'HOST': '',
-                'PORT': '',
     }
 }
 
